@@ -4,8 +4,11 @@ from flask_bcrypt import Bcrypt
 from flask_login import LoginManager
 import logging
 import json
+import socket
 
-
+hostname = socket.gethostname()
+local_ip = socket.gethostbyname(hostname)
+print(local_ip)
 logging.basicConfig(filename='record.log', level=logging.DEBUG)
 logging.basicConfig(filename='fatal.log', level=logging.FATAL)
 with open('modules/config.json') as configFile:
