@@ -2,7 +2,7 @@ import json
 import os
 print( os.listdir())
 mail_server = input("Enter your SMTP outgoing mail server: ")
-portNumber = input("Enter your outgoing port number: ")
+portNumber = input("Enter your outgoing port numbers: ")
 username = input("Enter your outgoing username: ")
 numbers = [1,2]
 ssl_value = ["True", "False"]
