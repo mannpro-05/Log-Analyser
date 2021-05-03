@@ -10,7 +10,6 @@ def get_ip_address():
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     s.connect(("8.8.8.8", 80))
     return s.getsockname()[0]
-print(get_ip_address())
 logging.basicConfig(filename='record.log', level=logging.DEBUG)
 logging.basicConfig(filename='fatal.log', level=logging.FATAL)
 with open('modules/config.json') as configFile:
@@ -18,7 +17,7 @@ with open('modules/config.json') as configFile:
 app = Flask(__name__)
 app.secret_key = "5791628bb0b13ce0c676dfde280ba245"
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
-app.config['SERVER_NAME'] = '127.0.0.1:5000'
+app.config['SERVER_NAME'] = get_ip_address()+':5000'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 app.config['UPLOAD_FOLDER'] = 'modules/downloadReports'
 db = SQLAlchemy(app)
