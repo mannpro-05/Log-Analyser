@@ -230,7 +230,7 @@ def login():
         user_email = User.query.filter_by(email=form.email.data).first()
         user_username = User.query.filter_by(username=form.email.data).first()
         if (user_email and bcrypt.check_password_hash(user_email.password, form.password.data)):
-            login_user(user_email, remember=True)
+            login_user(user_email, remember=False)
 
             conn.execute("INSERT INTO ACTIVITY VALUES (?,?,?)",
                          (now.strftime("%H:%M %Y-%m-%d"), current_user.username,
@@ -240,7 +240,7 @@ def login():
 
 
         elif (user_username and bcrypt.check_password_hash(user_username.password, form.password.data)):
-            login_user(user_username, remember=True)
+            login_user(user_username, remember=False)
             conn.execute("INSERT INTO ACTIVITY VALUES (?,?,?)",
                          (now.strftime("%H:%M %Y-%m-%d"), current_user.username,
                           "Logged into the system."))
