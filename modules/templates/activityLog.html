@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Activity log</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  <script src="static/ActivityLog.js"></script>
+  <link rel="stylesheet" href="static/activityLog.css">
+</head>
+<body>
+    <div class="topnav" id="myTopnav">
+        <a href="{{ url_for('createReport') }}" class="NavCreateReport" >Create Report</a>
+        <a href="{{ url_for('viewReport') }}" class="NavViewTable" >View Report</a>
+        <a href="{{ url_for('activityLog') }}" class="NavActivity" >Activity Log</a>
+        <a href="{{ url_for('helpForm') }}" class="NavHelp" >Help</a>
+        <a href="{{ url_for('config') }}" class="NavSetting" >Settings</a>
+        <a href="{{ url_for('account') }}" class="NavAccount" >Account</a>
+        <a href="{{ url_for('logout') }}" class="NavLogout" >Logout</a>
+        <a href="javascript:void(0);" class="icon" onclick="navControl()">
+          <i class="fa fa-bars"></i>
+        </a>
+      </div>
+
+
+
+<div class="ActivityContainer">
+
+    <div class="container">
+        <h2 class="ActivityHeader">Activity Logs</h2>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>TimeStamp</th>
+                    <th>User</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for value in activity %}
+                  <tr>
+
+                          <td>{{ value[0] }}</td>
+                          <td>{{ value[1] }}</td>
+                          <td>{{ value[2] }}</td>
+
+                  </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+</body>
+</html>
