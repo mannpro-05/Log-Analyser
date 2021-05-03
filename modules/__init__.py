@@ -6,9 +6,11 @@ import logging
 import json
 import socket
 
-hostname = socket.gethostname()
-local_ip = socket.gethostbyname(hostname)
-print(local_ip)
+def get_ip_address():
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    s.connect(("8.8.8.8", 80))
+    return s.getsockname()[0]
+print(get_ip_address())
 logging.basicConfig(filename='record.log', level=logging.DEBUG)
 logging.basicConfig(filename='fatal.log', level=logging.FATAL)
 with open('modules/config.json') as configFile:
