@@ -1,7 +1,8 @@
 import os
 import time
 import insertRecords
-os.chdir('/var/log/safesquid/extended/')
+
+os.chdir(os.getcwd()+'/logs')
 
 cronTime =int(time.time())
 
