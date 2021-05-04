@@ -70,8 +70,18 @@ for log in os.listdir():
                         if lst[val].strip('"') != '-':
                             lst[val] = lst[val].split('/')[2].split(':')[0].strip('"')
                     elif key == 'USERNAME':
-                        lst[val] = lst[val].split('@')[0].strip('"')
-
+                        username = lst[val].split('@')[0].strip('"')
+                        if username == "-":
+                            lst[val] = lst[mapper["CLIENT_IP"]].strip('"')
+                    elif key == 'APPLICATION_SIGNATURES':
+                        application = lst[val].strip('"')
+                        if application == "":
+                            request_profile = lst[mapper["REQUEST_PROFILES"]].strip('"')
+                            if request_profile == "":
+                                user_agent = lst[mapper["USERAGENT"]].strip('"')
+                                lst[val] = user_agent
+                            else:
+                                lst[val] = request_profile
                     cursor = conn.execute("SELECT ID FROM %s WHERE %s = ?" % (key, key), (lst[val].strip('"'),))
                     value = cursor.fetchone()
                     if value == None:
