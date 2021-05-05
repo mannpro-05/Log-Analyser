@@ -69,6 +69,8 @@ def insertRecords(fileName):
                         username = lst[val].split('@')[0].strip('"')
                         if username == "-":
                             lst[val] = lst[mapper["CLIENT_IP"]].strip('"')
+                        else:
+                            lst[val] = username
                     elif key == 'APPLICATION_SIGNATURES':
                         application = lst[val].strip('"')
                         if application == "":
@@ -136,6 +138,8 @@ def insertModifiedRecordsRecords(fileName, cronTime):
                             username = lst[val].split('@')[0].strip('"')
                             if username == "-":
                                 lst[val] = lst[mapper["CLIENT_IP"]].strip('"')
+                            else:
+                                lst[val] = username
                         elif key == 'APPLICATION_SIGNATURES':
                             application = lst[val].strip('"')
                             if application == "":
