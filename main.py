@@ -4,7 +4,7 @@ import datetime
 import os
 conn = sl.connect('logs.db')
 start = time.time()
-os.chdir(os.getcwd()+'/logs')
+os.chdir('/var/log/safesquid/extended/')
 mapper = {
     "DATE_TIME": 3,
     "STATUS": 5,

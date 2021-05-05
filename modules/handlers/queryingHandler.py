@@ -23,32 +23,55 @@ def queryCreater(id):
     records = cursor.fetchone()
     cursor = conn.execute("SELECT * FROM FILTERS WHERE ID = ?", (records[0],))
     filters = cursor.fetchall()
-    l = []
+    finalFiltersArray = []
+
     sql = joinHandler.createInnerJoinQuery(records[3].split(','))
     start = time.time()
     for filter in filters:
+        l = []
         if filter[1] == 'between':
             values = filter[3].split(',')
-            l.append('(F.'+filter[1]+' '+filter[2]+' '+ values[0] +' AND '+   values[1] +')')
+            finalFiltersArray.append('(F.'+filter[1]+' '+filter[2]+' '+ values[0] +' AND '+   values[1] +')')
         else:
             if filter[1] in exception:
-                l.append('(F.' + filter[1] + ' ' + filter[2] + ' ' + filter[3] + ')')
+                finalFiltersArray.append('(F.' + filter[1] + ' ' + filter[2] + ' ' + filter[3] + ')')
             else:
-                cursor = conn.execute('SELECT ID FROM %s WHERE %s = ?'% (filter[1], filter[1]), (filter[3],))
-                value = cursor.fetchone()
-                if value != None:
-                    l.append('(F.'+filter[1]+' '+ filter[2] +' '+str(value[0])+')')
-    if len(l)>1:
-        l = ' AND '.join(l)
-        sql += " WHERE " + l
-    elif len(l) == 0:
+                cursor = conn.execute('SELECT ID FROM %s WHERE %s like ? ESCAPE ?'% (filter[1], filter[1]), (filter[3],'/'))
+                value = cursor.fetchall()
+                if value != []:
+                    if len(value) > 1000:
+                        counter = 1
+                        l=[]
+                        temp = []
+                        for i in value:
+                            l.append('(F.' + filter[1] + ' ' + filter[2] + ' ' + str(i[0]) + ')')
+                            counter += 1
+                            if counter > 500:
+                                temp.append('('+' OR '.join(l)+')')
+                                l=[]
+                                counter = 1
+                        l = ' OR '.join(temp)
+                    else:
+                        for i in value:
+                            l.append('(F.'+filter[1]+' '+ filter[2] +' '+str(i[0])+')')
+                        l = ' OR '.join(l)
+                        l = '(' + l + ')'
+                    finalFiltersArray.append(l)
+                else:
+                    return []
+                    pass
+    print(finalFiltersArray)
+    if len(finalFiltersArray)>1:
+        finalFiltersArray = ' AND '.join(finalFiltersArray)
+        sql += " WHERE " + finalFiltersArray
+    elif len(finalFiltersArray) == 0:
         sql = sql
     else:
-        sql += " WHERE " + l[0]
+        sql += " WHERE " + finalFiltersArray[0]
     end = time.time()
+    print(sql)
     print('Time to create the sql query:',end-start)
     start = time.time()
-    print(sql)
     cursor = conn.execute(sql)
     value = cursor.fetchall()
     end = time.time()

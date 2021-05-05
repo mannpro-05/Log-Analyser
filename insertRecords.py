@@ -1,6 +1,5 @@
 import sqlite3 as sl
 import datetime
-import os
 conn = sl.connect('logs.db')
 
 mapper = {
