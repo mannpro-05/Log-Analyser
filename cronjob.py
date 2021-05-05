@@ -9,6 +9,7 @@ cursor = conn.execute("SELECT * FROM EMAIL")
 value = cursor.fetchall()
 minute = ''
 now = datetime.now()
+print(now.strftime("%H:%M %Y-%m-%d"))
 if now.minute < 10:
     minute = '0'+str(now.minute)
 else:
