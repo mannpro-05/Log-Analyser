@@ -1,6 +1,7 @@
 from flask import request, render_template, send_file, redirect, url_for, flash
 import sqlite3 as sl
-from modules.handlers import reportHandler, filterHandler, emailHandler, handleDownloads, deleteHandler, activityHandler
+from modules.handlers import reportHandler, filterHandler, emailHandler, handleDownloads, deleteHandler, activityHandler \
+    ,magicSuggestHandler
 from modules.mailDict import mailUpdate, sendMail
 import time
 from datetime import datetime
@@ -184,6 +185,12 @@ def sendQuery():
         conn.commit()
         return {"message":"done!"}
 
+@app.route('/getMagicSuggestData', methods=["POST"])
+@login_required
+def getMagicSuggestData():
+    if request.method == "POST":
+        data = request.get_json()
+        return magicSuggestHandler.getData(data["field"])
 
 
 

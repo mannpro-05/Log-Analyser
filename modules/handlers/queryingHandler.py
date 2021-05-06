@@ -60,7 +60,6 @@ def queryCreater(id):
                 else:
                     return []
                     pass
-    print(finalFiltersArray)
     if len(finalFiltersArray)>1:
         finalFiltersArray = ' AND '.join(finalFiltersArray)
         sql += " WHERE " + finalFiltersArray
@@ -70,6 +69,9 @@ def queryCreater(id):
         sql += " WHERE " + finalFiltersArray[0]
     end = time.time()
     print(sql)
+    now = datetime.now()
+    app.logger.info(
+        str(now.strftime("%H:%M %Y-%m-%d")) + ' ' + __file__ + ' ' + inspect.stack()[0][3] + ' SQL: ' + str(sql))
     print('Time to create the sql query:',end-start)
     start = time.time()
     cursor = conn.execute(sql)
