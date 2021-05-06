@@ -175,6 +175,7 @@ def mailConfig():
 def sendQuery():
     if request.method == "POST":
         now = datetime.now()
+        app.logger.info(str(now.strftime("%H:%M %Y-%m-%d")) + ' ' + __file__ + ' ' + inspect.stack()[0][3])
         data = request.get_json()
         sendMail.sendQuery(data["subject"],data["body"])
         conn = sl.connect('logs.db')
@@ -197,6 +198,7 @@ def sendQuery():
 @login_required
 def register():
     now = datetime.now()
+    app.logger.info(str(now.strftime("%H:%M %Y-%m-%d")) + ' ' + __file__ + ' ' + inspect.stack()[0][3])
     if current_user.is_authenticated and current_user.admin:
         form = RegistrationForm()
         if form.validate_on_submit():
@@ -222,6 +224,7 @@ def register():
 @app.route("/login", methods=['GET', 'POST'])
 def login():
     now = datetime.now()
+    app.logger.info(str(now.strftime("%H:%M %Y-%m-%d")) + ' ' + __file__ + ' ' + inspect.stack()[0][3])
     conn = sl.connect('logs.db')
     if current_user.is_authenticated:
         return redirect(url_for('account'))
@@ -253,8 +256,9 @@ def login():
 
 @app.route('/logout')
 def logout():
+    now = datetime.now()
+    app.logger.info(str(now.strftime("%H:%M %Y-%m-%d")) + ' ' + __file__ + ' ' + inspect.stack()[0][3])
     if current_user.is_authenticated:
-        now = datetime.now()
         conn = sl.connect('logs.db')
 
         conn.execute("INSERT INTO ACTIVITY VALUES (?,?,?)",
@@ -269,10 +273,11 @@ def logout():
 @app.route('/account', methods=['GET', 'POST'])
 @login_required
 def account():
+    now = datetime.now()
+    app.logger.info(str(now.strftime("%H:%M %Y-%m-%d")) + ' ' + __file__ + ' ' + inspect.stack()[0][3])
     form = UpdateAccountForm()
     if form.validate_on_submit():
         conn = sl.connect('logs.db')
-        now = datetime.now()
         if form.picture.data:
             picture_file= savePicture.save_picture(form.picture.data)
             current_user.image_file = picture_file
@@ -295,6 +300,8 @@ def account():
 @app.route('/reset_password', methods=['GET', 'POST'])
 def reset_request():
     now = datetime.now()
+    app.logger.info(str(now.strftime("%H:%M %Y-%m-%d")) + ' ' + __file__ + ' ' + inspect.stack()[0][3])
+    now = datetime.now()
     if current_user.is_authenticated:
         return redirect(url_for('home'))
     form = RequestResetForm()
@@ -312,6 +319,8 @@ def reset_request():
 
 @app.route('/reset_password/<token>', methods=['GET', 'POST'])
 def reset_token(token):
+    now = datetime.now()
+    app.logger.info(str(now.strftime("%H:%M %Y-%m-%d")) + ' ' + __file__ + ' ' + inspect.stack()[0][3])
     if current_user.is_authenticated:
         return redirect(url_for('home'))
     user = User.verify_reset_token(token)
@@ -335,6 +344,8 @@ def reset_token(token):
 
 @app.route('/remove_pic', methods=['GET','post'])
 def remove_pic():
+    now = datetime.now()
+    app.logger.info(str(now.strftime("%H:%M %Y-%m-%d")) + ' ' + __file__ + ' ' + inspect.stack()[0][3])
     form=UpdateAccountForm()
     current_user.image_file = 'default.jpg'
     db.session.commit()
@@ -346,6 +357,8 @@ def remove_pic():
 
 @app.route('/delete_profile')
 def delete_account():
+    now = datetime.now()
+    app.logger.info(str(now.strftime("%H:%M %Y-%m-%d")) + ' ' + __file__ + ' ' + inspect.stack()[0][3])
     user=User.query.filter_by(email=current_user.email).first()
     now = datetime.now()
     conn = sl.connect('logs.db')

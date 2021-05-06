@@ -21,10 +21,14 @@ def getAllData(data,fields):
     start = time.time()
     if "DATE_TIME" in fields:
         index = fields.index("DATE_TIME")
-    for row in data:
-        row = list(row)
-        row[index] = epochTImeConversions.epotchToDateTime(row[index])
-        finalData.append(row)
+        for row in data:
+            row = list(row)
+            row[index] = epochTImeConversions.epotchToDateTime(row[index])
+            finalData.append(row)
+    else:
+        for row in data:
+            row = list(row)
+            finalData.append(row)
     end = time.time()
     print("Time taken to create the final human readable form of final data",end-start)
     for i in fields:
