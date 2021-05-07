@@ -1,6 +1,0 @@
-INFO:werkzeug:127.0.0.1 - - [07/May/2021 15:25:01] "[33mGET / HTTP/1.1[0m" 404 -
-INFO:werkzeug: * Detected change in 'C:\\ProgramData\\Anaconda3\\Lib\\site-packages\\flask\\app.py', reloading
-INFO:werkzeug: * Detected change in 'C:\\ProgramData\\Anaconda3\\Lib\\site-packages\\flask\\sessions.py', reloading
-INFO:werkzeug:127.0.0.1 - - [07/May/2021 15:25:01] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
-INFO:werkzeug: * Restarting with windowsapi reloader
-INFO:werkzeug:127.0.0.1 - - [07/May/2021 15:25:06] "[33mGET / HTTP/1.1[0m" 404 -
