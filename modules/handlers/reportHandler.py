@@ -2,20 +2,22 @@ import sqlite3 as sl
 from modules import app
 from datetime import datetime
 import inspect
+from modules import epochTImeConversions
 '''
 input: title, description, fields from the records.
 processing: inserts the records into the database.
 Output: Id of the newly created record 
 '''
-def createReport(title, description, fields):
+exceprion = ['URL','HTTP_REFERER','STATUS','DOWNLOAD','UPLOAD']
+def createReport(title, description, fields, userid):
     now = datetime.now()
     app.logger.info(
         str(now.strftime("%H:%M %Y-%m-%d")) + ' ' + __file__ + ' ' + inspect.stack()[0][3] + ' ' + title + \
         ' ' + description + ' '+','.join(fields))
     conn = sl.connect('logs.db')
     try:
-        conn.execute("INSERT INTO RECORDS_LIST (TITLE, DESCRIPTION, COLUMNS) VALUES(?,?,?)",
-                 (title, description, fields))
+        conn.execute("INSERT INTO RECORDS_LIST (TITLE, DESCRIPTION, COLUMNS, USERID) VALUES(?,?,?,?)",
+                 (title, description, fields, userid))
     except Exception as e:
         print(e)
         return {'message':'The '+ title + ' already exists!!. Please change the value.', 'type':'error'}
@@ -42,11 +44,31 @@ def getEmailFilters(id):
     cursor = conn.execute("SELECT * FROM EMAIL WHERE ID = ?", (id,))
     emails = cursor.fetchall()
     for i in filters:
-        filter[str(counter)] = {
+        if i[1] in exceprion:
+            filter[str(counter)] = {
+                    "targetColumn": i[1],
+                    "condition": i[2],
+                    "value" : i[3]
+            }
+        elif i[1] == "DATE_TIME":
+            temp = []
+            for j in i[3].split(','):
+                temp.append(epochTImeConversions.epotchToDateTime(int(j)))
+                filter[str(counter)] = {
+                    "targetColumn": i[1],
+                    "condition": i[2],
+                    "value": ' AND '.join(temp)
+                }
+        else:
+            temp = []
+            for j in i[3].split(','):
+                cursor = conn.execute("SELECT %s FROM %s WHERE ID = ?"%(i[1],i[1]), (j,))
+                temp.append(cursor.fetchone()[0])
+            filter[str(counter)] = {
                 "targetColumn": i[1],
-				"condition": i[2],
-				"value" : i[3]
-        }
+                "condition": i[2],
+                "value": ' OR '.join(temp)
+            }
         counter+=1
     counter = 1
     for data in emails:

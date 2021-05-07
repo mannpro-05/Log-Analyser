@@ -33,7 +33,7 @@
                   <a class="nav-item nav-link" style="color: black;hover:black" href="{{ url_for('register') }}">Register</a>
                <a class="nav-item nav-link" style="color: black;hover:black" href="{{ url_for('logout') }}">Logout</a>
 
-              {% elif current_user.is_authenticated and current_user.email != 'MANNPRAJAPATI567@GMAIL.COM' %}
+              {% elif current_user.is_authenticated %}
                 <a class="nav-item nav-link" style="color: black;hover:black" href="{{ url_for('account') }}">Account</a>
                 <a class="nav-item nav-link" style="color: black;hover:black" href="{{ url_for('logout') }}">Logout</a>
 

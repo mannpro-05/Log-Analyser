@@ -1,6 +1,6 @@
 from flask import request, render_template, send_file, redirect, url_for, flash
 import sqlite3 as sl
-from modules.handlers import reportHandler, filterHandler, emailHandler, handleDownloads, deleteHandler, activityHandler \
+from modules.handlers import reportHandler, filterHandler, emailHandler, handleDownloads, deleteHandler, activityHandler\
     ,magicSuggestHandler
 from modules.mailDict import mailUpdate, sendMail
 import time
@@ -91,14 +91,15 @@ def insertReport():
     if request.method == "POST":
         data = request.get_json()
         conn = sl.connect('logs.db')
-
-        id = reportHandler.createReport(data["title"], data["description"], data['fields'])
+        print(data)
+        id = reportHandler.createReport(data["title"], data["description"], data['fields'], current_user.id)
         if type(id) is dict:
             return id
-        conn.execute("INSERT INTO ACTIVITY VALUES (?,?,?)",
-                     (now.strftime("%H:%M %Y-%m-%d"), current_user.username, "Created: " + data["title"] + " Report."))
+        conn.execute("INSERT INTO ACTIVITY VALUES (?,?,?,?)",
+                     (now.strftime("%H:%M %Y-%m-%d"), current_user.username + " ("+current_user.email+")", "Created: " +\
+                      data["title"] + " Report.", "Create Report Page."))
         conn.commit()
-        filterHandler.createFIlter(id, data["filters"])
+        filterHandler.createFIlter(id, data["filters"],data["startDate"],data["startTime"],data["endDate"], data["endTime"])
         emailHandler.createEmail(id, data["email"])
         return {'message':'The Report has been created successfully!', 'type':'success'}
 
@@ -119,8 +120,9 @@ def download(title, fileType):
     end = time.time()
     conn = sl.connect('logs.db')
     conn.execute("INSERT INTO INSERT_TIME VALUES (?,?)", (title, end - start))
-    conn.execute("INSERT INTO ACTIVITY VALUES (?,?,?)",
-                 (now.strftime("%H:%M %Y-%m-%d"), current_user.username, "Downloaded : " + title + "." + fileType))
+    conn.execute("INSERT INTO ACTIVITY VALUES (?,?,?,?)",
+                 (now.strftime("%H:%M %Y-%m-%d"), current_user.username + " ("+current_user.email+")", "Downloaded : " +\
+                  title + "." + fileType,"View Report Page."))
     conn.commit()
     print(end-start)
     return send_file(os.getcwd()+'/modules/downloadReports/'+fileName,as_attachment=True)
@@ -146,10 +148,10 @@ def deleteReport():
         str(now.strftime("%H:%M %Y-%m-%d")) + ' ' + __file__ + ' ' + inspect.stack()[0][3])
     if request.method == "POST":
         data = request.get_json()
-        message = deleteHandler.deleteReport(data["title"])
+        message = deleteHandler.deleteReport(data["title"], current_user.id)
         conn = sl.connect('logs.db')
-        conn.execute("INSERT INTO ACTIVITY VALUES (?,?,?)",
-                     (now.strftime("%H:%M %Y-%m-%d"), current_user.username, "Deleted: " + data["title"] + " Report."))
+        conn.execute("INSERT INTO ACTIVITY VALUES (?,?,?,?)",
+                     (now.strftime("%H:%M %Y-%m-%d"), current_user.username + " ("+current_user.email+")", "Deleted: " + data["title"] + " Report.",'View Reports Page.'))
         conn.commit()
         return message
 @app.route('/mailConfig', methods=['GET','POST'])
@@ -162,8 +164,9 @@ def mailConfig():
         data = request.get_json()
         mailUpdate.mailConfig(data)
         conn = sl.connect('logs.db')
-        conn.execute("INSERT INTO ACTIVITY VALUES (?,?,?)",
-                     (now.strftime("%H:%M %Y-%m-%d"), current_user.username, "Made Changes in the database!"))
+        conn.execute("INSERT INTO ACTIVITY VALUES (?,?,?,?)",
+                     (now.strftime("%H:%M %Y-%m-%d"), current_user.username + " ("+current_user.email+")"\
+                          , "Made Changes in the database!", "Mail Config Page."))
         conn.commit()
         return {"message":"The mail server has been updated!"}
 
@@ -180,8 +183,9 @@ def sendQuery():
         data = request.get_json()
         sendMail.sendQuery(data["subject"],data["body"])
         conn = sl.connect('logs.db')
-        conn.execute("INSERT INTO ACTIVITY VALUES (?,?,?)",
-                     (now.strftime("%H:%M %Y-%m-%d"), current_user.email, "Sent a query to support@safesquid.net"))
+        conn.execute("INSERT INTO ACTIVITY VALUES (?,?,?,?)",
+                     (now.strftime("%H:%M %Y-%m-%d"), current_user.email + " ("+current_user.email+")",\
+                      "Sent a query to support@safesquid.net", "Help Form Page."))
         conn.commit()
         return {"message":"done!"}
 
@@ -190,8 +194,7 @@ def sendQuery():
 def getMagicSuggestData():
     if request.method == "POST":
         data = request.get_json()
-        return magicSuggestHandler.getData(data["field"])
-
+        return magicSuggestHandler.getData(data["filter"])
 
 
 ''' Code for handling log related python routes Ends here '''
@@ -215,9 +218,10 @@ def register():
             db.session.commit()
             user = User.query.filter_by(email=form.email.data).first()
             conn = sl.connect('logs.db')
-            conn.execute("INSERT INTO ACTIVITY VALUES (?,?,?)",
+            conn.execute("INSERT INTO ACTIVITY VALUES (?,?,?,?)",
                          (now.strftime("%H:%M %Y-%m-%d"), current_user.username,
-                          "Created: " + user.username + " User in the system."))
+                          "Created: " + user.username+ " ("+current_user.email+")" + " User in the system."\
+                          , "Register Page."))
             conn.commit()
             flash('Your account has been created!', 'success')
             sendMail.user_register(user)
@@ -242,18 +246,18 @@ def login():
         if (user_email and bcrypt.check_password_hash(user_email.password, form.password.data)):
             login_user(user_email, remember=True)
 
-            conn.execute("INSERT INTO ACTIVITY VALUES (?,?,?)",
-                         (now.strftime("%H:%M %Y-%m-%d"), current_user.username,
-                          "Logged into the system."))
+            conn.execute("INSERT INTO ACTIVITY VALUES (?,?,?,?)",
+                         (now.strftime("%H:%M %Y-%m-%d"), current_user.username + " ("+current_user.email+")",
+                          "Logged into the system.", "Login Page"))
             conn.commit()
             return redirect(url_for('account'))
 
 
         elif (user_username and bcrypt.check_password_hash(user_username.password, form.password.data)):
             login_user(user_username, remember=True)
-            conn.execute("INSERT INTO ACTIVITY VALUES (?,?,?)",
-                         (now.strftime("%H:%M %Y-%m-%d"), current_user.username,
-                          "Logged into the system."))
+            conn.execute("INSERT INTO ACTIVITY VALUES (?,?,?,?)",
+                         (now.strftime("%H:%M %Y-%m-%d"), current_user.username + " ("+current_user.email+")",
+                          "Logged into the system.","Login Page"))
             conn.commit()
             return redirect(url_for('account'))
         else:
@@ -268,9 +272,9 @@ def logout():
     if current_user.is_authenticated:
         conn = sl.connect('logs.db')
 
-        conn.execute("INSERT INTO ACTIVITY VALUES (?,?,?)",
-                     (now.strftime("%H:%M %Y-%m-%d"), current_user.username,
-                      "Logged out from the system."))
+        conn.execute("INSERT INTO ACTIVITY VALUES (?,?,?,?)",
+                     (now.strftime("%H:%M %Y-%m-%d"), current_user.username + " ("+current_user.email+")",
+                      "Logged out from the system.", "Account Page"))
         conn.commit()
         logout_user()
     return redirect(url_for('login'))
@@ -288,9 +292,9 @@ def account():
         if form.picture.data:
             picture_file= savePicture.save_picture(form.picture.data)
             current_user.image_file = picture_file
-        conn.execute("INSERT INTO ACTIVITY VALUES (?,?,?)",
-                     (now.strftime("%H:%M %Y-%m-%d"), current_user.username,
-                      "Made changes to their account details."))
+        conn.execute("INSERT INTO ACTIVITY VALUES (?,?,?,?)",
+                     (now.strftime("%H:%M %Y-%m-%d"), current_user.username+ " ("+current_user.email+")",
+                      "Made changes to their account details.","Account Page"))
         conn.commit()
         current_user.username=form.username.data
         current_user.email=form.email.data
@@ -316,9 +320,9 @@ def reset_request():
         conn = sl.connect('logs.db')
         user = User.query.filter_by(email=form.email.data).first()
         sendMail.send_reset_email(user)
-        conn.execute("INSERT INTO ACTIVITY VALUES (?,?,?)",
+        conn.execute("INSERT INTO ACTIVITY VALUES (?,?,?,?)",
                      (now.strftime("%H:%M %Y-%m-%d"), form.email.data,
-                      "Requested for reset password"))
+                      "Requested for reset password","Reset Password Page"))
         conn.commit()
         flash('An email has been send with instructions to reset your password!','success')
         return redirect(url_for('login'))
@@ -342,8 +346,8 @@ def reset_token(token):
         db.session.commit()
         conn = sl.connect('logs.db')
         conn.execute("INSERT INTO ACTIVITY VALUES (?,?,?)",
-                     (now.strftime("%H:%M %Y-%m-%d"), user.username,
-                      "Admin Re-set the password password"))
+                     (now.strftime("%H:%M %Y-%m-%d"), user.username + " ("+current_user.email+")" ,
+                      "Admin Re-set the password password","Update Password Page"))
         conn.commit()
         flash('Your password has been Updated!', 'success')
         return redirect(url_for('home'))

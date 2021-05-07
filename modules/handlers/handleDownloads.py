@@ -47,12 +47,19 @@ def createDownloadFile(title="", id=0, fileType=".csv", pythonFileName=""):
         worksheet.write_row(2, 0, ["Description", value[2]])
         worksheet.write_row(3, 0, value[3].split(','))
         row=4
-        for i in finalData:
-            worksheet.write_row(row, 0, i)
-            row+=1
-        workbook.close()
-        end = time.time()
-        print('Time taken to create the XLSX file:', end - start)
+        if finalData == []:
+            worksheet.write_row(4, 0, ["The Data which you asked for is not there in the dataBase.\
+             Please apply other filters and try again!!!"])
+            workbook.close()
+            end = time.time()
+            print('Time taken to create the XLSX file:', end - start)
+        else:
+            for i in finalData:
+                worksheet.write_row(row, 0, i)
+                row+=1
+            workbook.close()
+            end = time.time()
+            print('Time taken to create the XLSX file:', end - start)
         return value[1]+'.xlsx'
     elif fileType == 'pdf':
         pdfCreator.createPDF(finalData, value[3].split(","))

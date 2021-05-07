@@ -13,6 +13,7 @@ Output: returns the final data.
 '''
 
 exception = ['STATUS','UPLOAD','DOWNLOAD', 'DATE_TIME']
+magicException = ['HTTP_REFERER','URL']
 
 def queryCreater(id):
     now = datetime.now()
@@ -29,37 +30,46 @@ def queryCreater(id):
     start = time.time()
     for filter in filters:
         l = []
-        if filter[1] == 'between':
+        if filter[2] == 'between':
             values = filter[3].split(',')
             finalFiltersArray.append('(F.'+filter[1]+' '+filter[2]+' '+ values[0] +' AND '+   values[1] +')')
         else:
             if filter[1] in exception:
-                finalFiltersArray.append('(F.' + filter[1] + ' ' + filter[2] + ' ' + filter[3] + ')')
+                temp = []
+                for i in filter[3].split(','):
+                    temp.append('(F.' + filter[1] + ' ' + filter[2] + ' ' + i + ')')
+                finalFiltersArray.append('(' + ' OR '.join(temp) + ')')
             else:
-                cursor = conn.execute('SELECT ID FROM %s WHERE %s like ? ESCAPE ?'% (filter[1], filter[1]), (filter[3],'/'))
-                value = cursor.fetchall()
-                if value != []:
-                    if len(value) > 1000:
-                        counter = 1
-                        l=[]
-                        temp = []
-                        for i in value:
-                            l.append('(F.' + filter[1] + ' ' + filter[2] + ' ' + str(i[0]) + ')')
-                            counter += 1
-                            if counter > 500:
-                                temp.append('('+' OR '.join(l)+')')
-                                l=[]
-                                counter = 1
-                        l = ' OR '.join(temp)
+                if filter[1] in magicException:
+                    cursor = conn.execute('SELECT ID FROM %s WHERE %s like ? ESCAPE ?'% (filter[1], filter[1]), (filter[3],'/'))
+                    value = cursor.fetchall()
+                    if value != []:
+                        if len(value) > 1000:
+                            counter = 1
+                            l=[]
+                            temp = []
+                            for i in value:
+                                l.append('(F.' + filter[1] + ' ' + filter[2] + ' ' + str(i[0]) + ')')
+                                counter += 1
+                                if counter > 500:
+                                    temp.append('('+' OR '.join(l)+')')
+                                    l=[]
+                                    counter = 1
+                            l = ' OR '.join(temp)
+                        else:
+                            for i in value:
+                                l.append('(F.'+filter[1]+' '+ filter[2] +' '+str(i[0])+')')
+                            l = ' OR '.join(l)
+                            l = '(' + l + ')'
+                        finalFiltersArray.append(l)
                     else:
-                        for i in value:
-                            l.append('(F.'+filter[1]+' '+ filter[2] +' '+str(i[0])+')')
-                        l = ' OR '.join(l)
-                        l = '(' + l + ')'
-                    finalFiltersArray.append(l)
+                        return []
                 else:
-                    return []
-                    pass
+                    temp = []
+                    for i in filter[3].split(','):
+                        temp.append('(F.' + filter[1] + ' ' + filter[2] + ' ' + i + ')')
+                    finalFiltersArray.append('(' + ' OR '.join(temp) + ')')
+    print(finalFiltersArray)
     if len(finalFiltersArray)>1:
         finalFiltersArray = ' AND '.join(finalFiltersArray)
         sql += " WHERE " + finalFiltersArray
@@ -69,9 +79,6 @@ def queryCreater(id):
         sql += " WHERE " + finalFiltersArray[0]
     end = time.time()
     print(sql)
-    now = datetime.now()
-    app.logger.info(
-        str(now.strftime("%H:%M %Y-%m-%d")) + ' ' + __file__ + ' ' + inspect.stack()[0][3] + ' SQL: ' + str(sql))
     print('Time to create the sql query:',end-start)
     start = time.time()
     cursor = conn.execute(sql)

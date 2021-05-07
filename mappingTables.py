@@ -129,7 +129,8 @@ def createTable():
                            ID INTEGER PRIMARY KEY AUTOINCREMENT,
                            TITLE VARCHAR UNIQUE,
                            DESCRIPTION VARCHAR ,
-                           COLUMNS VARCHAR 
+                           COLUMNS VARCHAR,
+                           USERID INTEGER 
                        );
                    ''')
     conn.execute('''
@@ -168,7 +169,8 @@ def createTable():
     CREATE TABLE ACTIVITY (
         DATE_TIME DATE_TIME,
         USERNAME TEXT,
-        ACTION TEXT
+        ACTION TEXT,
+        PAGENAME TEXT
     );
     ''')
 
