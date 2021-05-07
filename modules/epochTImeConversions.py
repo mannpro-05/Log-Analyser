@@ -18,3 +18,8 @@ def dateTimeToEpotch(data):
     date = data.split(':')
     day = date[0].split('-')
     return int(datetime.datetime(int(day[0]), int(day[1]), int(day[2]), int(date[1]), int(date[2]), int(date[3])).timestamp())
+
+def dateTimeToEpotchFilter(date, time):
+    date = date.split('-')
+    time = time.split(':')
+    return int(datetime.datetime(int(date[0]), int(date[1]), int(date[2]), int(time[0]), int(time[1])).timestamp())
