@@ -11,7 +11,7 @@ for i in os.listdir():
     cTime = os.path.getctime(i)
     if (cronTime >= int(cTime) and (cronTime - 900) <= int(cTime)):
         print(i, cTime)
-        insertRecords.insertModifiedRecordsRecords(i,cronTime)
+        insertRecords.insertModifiedRecordsRecords(i,cronTime - 900)
 
     elif (cronTime>= int(mTime) and (cronTime - 900) <= int(mTime)):
         print(i, mTime)
