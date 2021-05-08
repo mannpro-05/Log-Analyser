@@ -230,7 +230,6 @@ nav ul li a:hover{
   z-index: 1;
 }
 
-/* Links inside the dropdown */
 .dropdown-content button {
   color: black;
   padding: 12px 16px;
@@ -241,17 +240,9 @@ nav ul li a:hover{
 .show {display: block;}
 
 ul {
-  /*-moz-column-count: 4;*/
-  /*-moz-column-gap: 20px;*/
-  /*-webkit-column-count: 4;*/
-  /*-webkit-column-gap: 20px;*/
-  /*column-count: 3;*/
-  /*column-gap: 20px;*/
   width: 100%;
   display: grid;
   grid-template-columns: 60% 15% 20%;
-  /* grid-template-columns: auto auto auto; */
-  /* grid-template-rows: auto auto ; */
   grid-gap : 10px;
 }
 
@@ -329,27 +320,15 @@ tr td ol li{
   padding-left: 4px;
 }
 
-.reportEmails {
-  width: 150%;
-}
 
 .reportEmails ol {
   text-align: center;
   width: 100%;
 }
 
-.reportActions{
-  width: 150px;
-}
-
 th,th, td{
   text-align: center;
 }
-
-
-/* .table-striped tbody tr:nth-of-type(odd) {
-  background-color: white;
-} */
 
 
 @media screen and (max-width: 1000px) {
@@ -373,19 +352,6 @@ th {
   padding-right: 20px;
   padding-left: 20px;
 }
-
-/*.email-recipient{*/
-/*  float: left;*/
-/*  width: 120%;*/
-/*}*/
-
-/*.email-frequency{*/
-/*width: 80%;*/
-/*}*/
-
-/*.email-schedule{*/
-/*width: 80%;*/
-/*}*/
 
 a{
   text-decoration: none;

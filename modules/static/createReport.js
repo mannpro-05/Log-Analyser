@@ -192,28 +192,18 @@ function buildPreviewTable() {
 }
 
 function addColumn(columnName) {
-    selectedColumns = jQuery.grep(selectedColumns, function (value) {
-        return value != "No_of_Hits";
-    });
-    
-    if(ColumnName == "DATE_TIME"){
-        selectedColumns.unshift("DATE_TIME");
-    } else {
-        selectedColumns.push(columnName);
-    }
-    
+    selectedColumns.push(columnName);
     $("#columnButton").text("Remove");
     buildPreviewTable();
 }
 
 function removeColumn(columnName) {
 
-    if(ColumnName == "DATE_TIME"){
-        selectedColumns.unshift("No_of_Hits");
-    }
     selectedColumns = jQuery.grep(selectedColumns, function (value) {
         return value != columnName;
     });
+
+    console.log(selectedColumns);
     $("#columnButton").text("Add");
     buildPreviewTable();
 }
@@ -247,20 +237,36 @@ function removeRow(row) {
 function addFilterRow() {
 
     var row = $("#FilterTable tbody").append(filterRow);
-    // var TargetColumn = $(row).find(".filterCondition").val();
+    var TargetColumn = $(row).find(".filterColumn").val();
     $(row).find("tr").last().attr('id', "filterRow-" + noFilterRows);
+    var magicData = null;
+    $.ajax({
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({ filter: TargetColumn }),
+        dataType: 'json',
+        url: '/getMagicSuggestData',
+        async: false,
+        success : function(data) {
+                    magicData = data;
+                    console.log(magicData);
+                }
 
+    });
+    console.log(magicData);
     $(row).find(".filterValue .magicSuggest").magicSuggest({
-        
-        // data: "/getData",
-        data: [{"id":"1", "name":"Paris"}, {"id":"2", "name":"New York"}],
-        // dataUrlParams: { filter: TargetColumn },
-        allowFreeEntries: false, 
+
+        data: magicData,
+        //data: [{"id":"1", "name":"Paris"}, {"id":"2", "name":"New York"}],
+        allowFreeEntries: false,
         valueField: 'id',
         displayField: 'name',
         allowDuplicates : false,
         expandOnFocus: true,
-        style: 'width:100%',
+        required: true,
+        noSuggestionText: 'No result matching  {{query}}',
+        maxSuggestions: 5,
+
     });
 }
 
@@ -270,12 +276,22 @@ function filterChange(filterSelect) {
     console.log("Filter Changed for Row id : " + rowID);
     let filterConditionDOM = $(filterSelect).parent().parent().find(".filterCondition");
     let filterValueDOM = $(filterSelect).parent().parent().find(".filterValue");
-    var TargetColumn = $(filterSelect).val();
 
     filterConditionDOM.empty().append('<option value="=">Equals</option><option value="!=">Not Equals</option>');
 
     filterValueDOM.empty().append('<div class="magicSuggest" name="magicSuggest"></div><b><small class="ErrorContainer">Error Message</small></b>');
-    
+    var magicData;
+    $.ajax({
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({filter: TargetColumn}),
+        dataType: 'json',
+        url: '/getMagicSuggestData',
+        async: false,
+        success: function (data) {
+            magicData = data;
+        }
+    });
     if (numericFilterArray.includes(TargetColumn)) {
 
         $.each(numericFilterOptions, function (optionText, optionValue) {
@@ -288,24 +304,26 @@ function filterChange(filterSelect) {
     else if (hugeFilterValueArray.includes(TargetColumn)){
         filterValueDOM.find(".magicSuggest").magicSuggest({
             // data: "/getData",
-            data: [{"id":"1", "name":"Paris"}, {"id":"2", "name":"New York"}],
             // dataUrlParams: { filter: TargetColumn },
             allowFreeEntries: true,
             allowDuplicates : false,
             expandOnFocus: false,
             vtype: 'alphanum',
+            maxDropHeight: 0,
         });
     }
     else{
         filterValueDOM.find(".magicSuggest").magicSuggest({
-            // data: "/getData",
-            data: [{"id":"1", "name":"Paris"}, {"id":"2", "name":"New York"}],
-            // dataUrlParams: { filter: TargetColumn },
+            data: magicData,
             valueField: 'id',
             displayField: 'name',
             allowFreeEntries: false,
             allowDuplicates : false,
-            expandOnFocus: false,
+            expandOnFocus: true,
+            required: true,
+            noSuggestionText: 'No result matching  {{query}}',
+            maxSuggestions: 5,
+
         });
     }
 }
@@ -337,10 +355,10 @@ function checkDescription(){
 }
 
 function checkStartDateTime(){
-    
+
     var startDate = $("#start_date")[0];
     var startTime = $("#start_time")[0];
-    
+
     let valid = true;
 
     if( startTime.value != '' && startDate.value == ''){
@@ -353,7 +371,7 @@ function checkStartDateTime(){
 }
 
 function checkEndDateTime(){
-    
+
     var endDate = $("#end_date")[0];
     var endTime = $("#end_time")[0];
     let valid = true;
@@ -371,9 +389,9 @@ function checkEmailTable(){
     let valid = true;
 
     $("#EmailTable tbody tr").each(function () {
-        
+
         var email = $(this).find(".inputRecipient")[0];
-        
+
         if (email.value.trim() === "") {
             onError(email, "*Recipient cannot be empty");
             valid = false;
@@ -387,7 +405,7 @@ function checkEmailTable(){
 
 function checkFilterTable(){
     let valid = true;
-    
+
     $("#FilterTable tbody tr").each(function () {
 
         if( $(this).find('input[name="magicSuggest[]"]').length == 0) {
@@ -404,7 +422,7 @@ function checkFilterTable(){
 function validateInput() {
 
     var valid = true;
-    
+
     vaild = checkTitle();
     valid = checkDescription() && valid;
     valid = checkStartDateTime() && valid;
@@ -436,7 +454,7 @@ function onError(input, message) {
 
 // -----------------------------submit-----------------------------
 function submit() {
-     
+
 
     var data = {
         "title": $("#title").val(),
@@ -475,13 +493,13 @@ function submit() {
         $(this).find('input[name="magicSuggest[]"]').each(function () {
             magicValues.push($(this).val());
         });
-        
+
         data["filters"][j] = {
             "targetColumn": $(this).find(".filterColumn").val(),
             "condition": $(this).find(".filterCondition").val(),
             "value": magicValues.join(),
         };
-        
+
     });
 
     $.ajax({
