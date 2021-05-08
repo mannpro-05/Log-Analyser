@@ -20,6 +20,8 @@ def createFIlter(id, filters, sDate, sTime, eDate, eTime):
     elif sDate == "" and eDate != "":
         time = epochTImeConversions.dateTimeToEpotchFilter(eDate, eTime)
         conn.execute("INSERT INTO FILTERS VALUES (?,?,?,?)", (id, "DATE_TIME","<",str(time)))
+    elif sDate == "" and eDate == "":
+        pass
     else:
         stime = epochTImeConversions.dateTimeToEpotchFilter(sDate, sTime)
         etime = epochTImeConversions.dateTimeToEpotchFilter(eDate, eTime)
