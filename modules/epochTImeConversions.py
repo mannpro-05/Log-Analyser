@@ -22,4 +22,6 @@ def dateTimeToEpotch(data):
 def dateTimeToEpotchFilter(date, time):
     date = date.split('-')
     time = time.split(':')
+    if len(time) == 1:
+        return int(datetime.datetime(int(date[0]), int(date[1]), int(date[2])).timestamp())
     return int(datetime.datetime(int(date[0]), int(date[1]), int(date[2]), int(time[0]), int(time[1])).timestamp())
