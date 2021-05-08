@@ -29,7 +29,12 @@ def createDownloadFile(title="", id=0, fileType=".csv", pythonFileName=""):
         writer = csv.writer(file)
         rows = ["ID",value[0]],["Record-Name",value[1]],["Description", value[2]]
         writer.writerows(rows)
-        writer.writerow(value[3].split(","))
+        temp=value[3].split(',')
+        if "DATE_TIME" not in temp:
+            temp.insert(0,'NUMBER OF HITS')
+            writer.writerow(temp)
+        else:
+            writer.writerow(temp)
         if finalData == []:
             writer.writerow(["The Data which you asked for is not there in the dataBase.\
              Please apply other filters and try again!!!"])
@@ -45,7 +50,12 @@ def createDownloadFile(title="", id=0, fileType=".csv", pythonFileName=""):
         worksheet.write_row(0, 0,["Record-Id",value[0]])
         worksheet.write_row(1, 0, ["Title", value[1]])
         worksheet.write_row(2, 0, ["Description", value[2]])
-        worksheet.write_row(3, 0, value[3].split(','))
+        temp = value[3].split(',')
+        if "DATE_TIME" not in temp:
+            temp.insert(0,'NUMBER OF HITS')
+            worksheet.write_row(3, 0, temp)
+        else:
+            worksheet.write_row(3, 0, temp)
         row=4
         if finalData == []:
             worksheet.write_row(4, 0, ["The Data which you asked for is not there in the dataBase.\

@@ -49,6 +49,6 @@ def createInnerJoinQuery(fields):
     columns = ','.join(columns)
     joinStr = ' '.join(joinArr)
     if "DATE_TIME" not in fields:
-        return "SELECT DISTINCT " + columns + ",COUNT(*) AS ROWCOUNT FROM FINAL_LOG AS F " + joinStr, " GROUP BY "+ columns + " ORDER BY ROWCOUNT DESC"
+        return "SELECT DISTINCT COUNT(*) AS ROWCOUNT," + columns + "  FROM FINAL_LOG AS F " + joinStr, " GROUP BY "+ columns + " ORDER BY ROWCOUNT DESC"
     return "SELECT DISTINCT "+columns+" FROM FINAL_LOG AS F "+joinStr, " ORDER BY F.DATE_TIME DESC"
 
