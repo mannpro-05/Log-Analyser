@@ -51,38 +51,40 @@ def queryCreater(id):
                 for i in filter[3].split(','):
                     temp.append('(F.' + filter[1] + ' ' + filter[2] + ' ' + i + ')')
                 finalFiltersArray.append('(' + ' OR '.join(temp) + ')')
-
             else:
                 if filter[1] in magicException:
-                    cursor = conn.execute('SELECT ID FROM %s WHERE %s like ? ESCAPE ?'% (filter[1], filter[1]), ('%'+filter[3]+'%','/'))
-                    value = cursor.fetchall()
-                    if value != []:
-                        if len(value) > 1000:
-                            counter = 1
-                            l=[]
-                            temp = []
-                            for i in value:
-                                l.append('(F.' + filter[1] + ' ' + filter[2] + ' ' + str(i[0]) + ')')
-                                counter += 1
-                                if counter > 500:
-                                    temp.append('('+' OR '.join(l)+')')
-                                    l=[]
-                                    counter = 1
-                            l = ' OR '.join(temp)
+                    multipleUrl = []
+                    for j in filter[3].split(','):
+                        l = []
+                        cursor = conn.execute('SELECT ID FROM %s WHERE %s like ? ESCAPE ?'% (filter[1], filter[1]), ('%'+j+'%','/'))
+                        value = cursor.fetchall()
+                        if value != []:
+                            if len(value) > 1000:
+                                counter = 1
+                                l=[]
+                                temp = []
+                                for i in value:
+                                    l.append('(F.' + filter[1] + ' ' + filter[2] + ' ' + str(i[0]) + ')')
+                                    counter += 1
+                                    if counter > 500:
+                                        temp.append('('+' OR '.join(l)+')')
+                                        l=[]
+                                        counter = 1
+                                    l = ' OR '.join(temp)
+                            else:
+                                for i in value:
+                                    l.append('(F.'+filter[1]+' '+ filter[2] +' '+str(i[0])+')')
+                                l = ' OR '.join(l)
+                                l = '(' + l + ')'
+                                multipleUrl.append(l)
                         else:
-                            for i in value:
-                                l.append('(F.'+filter[1]+' '+ filter[2] +' '+str(i[0])+')')
-                            l = ' OR '.join(l)
-                            l = '(' + l + ')'
-                        finalFiltersArray.append(l)
-                    else:
-                        return []
+                            return []
+                    finalFiltersArray.append('(' + ' OR '.join(multipleUrl) + ')')
                 else:
                     temp = []
                     for i in filter[3].split(','):
                         temp.append('(F.' + filter[1] + ' ' + filter[2] + ' ' + i + ')')
                     finalFiltersArray.append('(' + ' OR '.join(temp) + ')')
-    print(finalFiltersArray)
     if "DATE_TIME" not in records[3].split(','):
         fields = records[3].split(',')
         fields.append('NUMBER_OF_HITS')
