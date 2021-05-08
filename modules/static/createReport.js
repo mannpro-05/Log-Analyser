@@ -66,6 +66,7 @@ const filterRow = `
     <td>
         <select class="filterCondition" name="filterConditionSelect">
             <option value="=">Equals</option>
+            <option value="!=">Not Equals</option>
         </select>
     </td>
     <td>
@@ -94,9 +95,12 @@ var sampleData = [
     { 'METHOD': 'GET', 'DOWNLOAD': '125', 'UPLOAD': '4512584', 'STATUS': '400', 'DATE_TIME': '15/Oct/2016:08:22:45', 'USERNAME': 'kk@192:412:311:54', 'CLIENT_IP': '192:412:311:54', 'URL': 'http://monzila.com', 'HTTP_REFERER': 'http://459.789.161.45', 'USERAGENT': 'chrome', 'FILTER_NAME': '-', 'FILTER_REASON': '-', 'CACHECODE': 'TCO_MISS', 'USER_GROUPS': 'office 9', 'REQUEST_PROFILES': 'MEDIUM UPLOAD', 'APPLICATION_SIGNATURES': 'Unidentified Web2.0,All Posts,Uploads,Firefox,Internet Browse', 'CATEGORIES': 'Search Engines & Unknown', 'UPLOAD_CONTENT': 'application/vnd.ms-excel,text/plain', 'DOWNLOAD_CONTENT': 'img/gif' }
 ];
 
-var specialFilterArray = ["STATUS", "UPLOAD", "DOWNLOAD"];
+var numberInput = '<input class="numberFilter" type="number" name="magicSuggest[]" min="0" ></input>';
+var hugeFilterValueInput = '<input class="hugeFilter" type="text" name="magicSuggest[]"></input>';
+
+var numericFilterArray = ["STATUS", "UPLOAD", "DOWNLOAD"];
 var hugeFilterValueArray = ["URL", "HTTP_REFERER"];
-var specialFilterOptions = {
+var numericFilterOptions = {
     "Greater Than": ">",
     "Less Than": "<",
     // "Between": "between",
@@ -188,18 +192,28 @@ function buildPreviewTable() {
 }
 
 function addColumn(columnName) {
-    selectedColumns.push(columnName);
+    selectedColumns = jQuery.grep(selectedColumns, function (value) {
+        return value != "No_of_Hits";
+    });
+    
+    if(ColumnName == "DATE_TIME"){
+        selectedColumns.unshift("DATE_TIME");
+    } else {
+        selectedColumns.push(columnName);
+    }
+    
     $("#columnButton").text("Remove");
     buildPreviewTable();
 }
 
 function removeColumn(columnName) {
 
+    if(ColumnName == "DATE_TIME"){
+        selectedColumns.unshift("No_of_Hits");
+    }
     selectedColumns = jQuery.grep(selectedColumns, function (value) {
         return value != columnName;
     });
-
-    console.log(selectedColumns);
     $("#columnButton").text("Add");
     buildPreviewTable();
 }
@@ -233,35 +247,20 @@ function removeRow(row) {
 function addFilterRow() {
 
     var row = $("#FilterTable tbody").append(filterRow);
-    var TargetColumn = $(row).find(".filterColumn").val();
+    // var TargetColumn = $(row).find(".filterCondition").val();
     $(row).find("tr").last().attr('id', "filterRow-" + noFilterRows);
-    var magicData = null;
-    $.ajax({
-        type: 'POST',
-        contentType: 'application/json',
-        data: JSON.stringify({ filter: TargetColumn }),
-        dataType: 'json',
-        url: '/getMagicSuggestData',
-        async: false,
-        success : function(data) {
-                    magicData = data;
-                    console.log(magicData);
-                }
 
-    });
-    console.log(magicData);
     $(row).find(".filterValue .magicSuggest").magicSuggest({
-
-        data: magicData,
-        //data: [{"id":"1", "name":"Paris"}, {"id":"2", "name":"New York"}],
-        allowFreeEntries: false,
+        
+        // data: "/getData",
+        data: [{"id":"1", "name":"Paris"}, {"id":"2", "name":"New York"}],
+        // dataUrlParams: { filter: TargetColumn },
+        allowFreeEntries: false, 
         valueField: 'id',
         displayField: 'name',
         allowDuplicates : false,
         expandOnFocus: true,
-        required: true,
-        noSuggestionText: 'No result matching  {{query}}',
-
+        style: 'width:100%',
     });
 }
 
@@ -271,101 +270,105 @@ function filterChange(filterSelect) {
     console.log("Filter Changed for Row id : " + rowID);
     let filterConditionDOM = $(filterSelect).parent().parent().find(".filterCondition");
     let filterValueDOM = $(filterSelect).parent().parent().find(".filterValue");
+    var TargetColumn = $(filterSelect).val();
 
-    filterConditionDOM.empty().append('<option value="=">Equals</option>');
+    filterConditionDOM.empty().append('<option value="=">Equals</option><option value="!=">Not Equals</option>');
 
     filterValueDOM.empty().append('<div class="magicSuggest" name="magicSuggest"></div><b><small class="ErrorContainer">Error Message</small></b>');
-    var magicData;
-    $.ajax({
-        type: 'POST',
-        contentType: 'application/json',
-        data: JSON.stringify({ filter: TargetColumn }),
-        dataType: 'json',
-        url: '/getMagicSuggestData',
-        async: false,
-        success : function(data) {
-                    magicData = data;
-                }
+    
+    if (numericFilterArray.includes(TargetColumn)) {
 
-    });
-    console.log(magicData);
-    //Upload Download Status
-    if (specialFilterArray.includes(TargetColumn)) {
-        $.each(specialFilterOptions, function (optionText, optionValue) {
+        $.each(numericFilterOptions, function (optionText, optionValue) {
             filterConditionDOM.append(
                 $('<option></option>').val(optionValue).html(optionText)
             );
         });
-        filterValueDOM.find(".magicSuggest").magicSuggest({
-            data: magicData,
-            //data: [{"id":"1", "name":"Paris"}, {"id":"2", "name":"New York"}],
-            allowFreeEntries: true,
-            allowDuplicates : false,
-            expandOnFocus: false,
-            vregex: /^[0-9]*$/,
-            maxDropHeight: 0,
-            noSuggestionText: 'Only enter Numeric values',
-            required: true,
-
-        });
+        filterValueDOM.find(".magicSuggest").append(numberInput);
     }
-    //URL,HTTP_REFERER
     else if (hugeFilterValueArray.includes(TargetColumn)){
         filterValueDOM.find(".magicSuggest").magicSuggest({
-            data: magicData,
+            // data: "/getData",
+            data: [{"id":"1", "name":"Paris"}, {"id":"2", "name":"New York"}],
+            // dataUrlParams: { filter: TargetColumn },
             allowFreeEntries: true,
             allowDuplicates : false,
             expandOnFocus: false,
             vtype: 'alphanum',
-            maxDropHeight: 0,
-            required: true,
-            noSuggestionText: 'The percent sign (%) represents zero, one, or multiple characters ' +
-                ' The underscore sign (_) represents one, single character and \\ represents escape sequence. ',
-
         });
     }
-    //
     else{
         filterValueDOM.find(".magicSuggest").magicSuggest({
-            data: magicData,
+            // data: "/getData",
+            data: [{"id":"1", "name":"Paris"}, {"id":"2", "name":"New York"}],
+            // dataUrlParams: { filter: TargetColumn },
             valueField: 'id',
             displayField: 'name',
             allowFreeEntries: false,
             allowDuplicates : false,
-            expandOnFocus: true,
-            required: true,
-            noSuggestionText: 'No result matching  {{query}}',
-
+            expandOnFocus: false,
         });
     }
 }
 
 // -----------------------------validation-----------------------------
-function validateInput() {
 
-    var valid = true
-    var Title = document.getElementById("title");
-    var Description = document.getElementById("description");
-
-    var titleFormat = /^a-zA-Z0-9\.\-\S*$/g;
-
+function checkTitle(){
+    let Title = $("#title")[0];
     if (Title.value.trim() === "") {
         onError(Title, "*Title cannot be empty");
-        valid = false;
+        return false;
 
-    } else if (Title.value.match(titleFormat)) {
+    } else if (Title.value.match(/[^A-Za-z 0-9]/g)) {
         onError(Title, "*Special Characters Are Not Allow");
-        valid = false;
+        return false;
     } else {
         onSuccess(Title);
     }
-    
+}
+
+function checkDescription(){
+    let Description = $("#description")[0];
     if (Description.value.trim() === "") {
         onError(Description, "*Description cannot be empty");
-        valid = false;
+        return false;
     } else {
         onSuccess(Description);
     }
+}
+
+function checkStartDateTime(){
+    
+    var startDate = $("#start_date")[0];
+    var startTime = $("#start_time")[0];
+    
+    let valid = true;
+
+    if( startTime.value != '' && startDate.value == ''){
+        onError(startDate, "*Start Date required");
+        valid = false;
+    } else {
+        onSuccess(startDate);
+    }
+    return valid;
+}
+
+function checkEndDateTime(){
+    
+    var endDate = $("#end_date")[0];
+    var endTime = $("#end_time")[0];
+    let valid = true;
+
+    if( endTime.value != '' && endDate.value == ''){
+        onError(endDate, "*Start Date required");
+        valid = false;
+    } else {
+        onSuccess(endDate);
+    }
+    return valid;
+}
+
+function checkEmailTable(){
+    let valid = true;
 
     $("#EmailTable tbody tr").each(function () {
         
@@ -379,6 +382,12 @@ function validateInput() {
         }
     });
 
+    return valid;
+}
+
+function checkFilterTable(){
+    let valid = true;
+    
     $("#FilterTable tbody tr").each(function () {
 
         if( $(this).find('input[name="magicSuggest[]"]').length == 0) {
@@ -392,6 +401,22 @@ function validateInput() {
     return valid;
 }
 
+function validateInput() {
+
+    var valid = true;
+    
+    vaild = checkTitle();
+    valid = checkDescription() && valid;
+    valid = checkStartDateTime() && valid;
+    valid = checkEndDateTime() && valid;
+    valid = checkEmailTable() && valid;
+    valid = checkFilterTable() && valid;
+
+    console.log("Validity", valid);
+
+    return valid;
+}
+
 function onSuccess(input) {
     console.log("Success: ", input);
     $(input).parent().addClass("success");
@@ -400,8 +425,8 @@ function onSuccess(input) {
 }
 
 function onError(input, message) {
-
     console.log("Error: ", input, message);
+    console.log($(input).parent().find("b").html());
     $(input).parent().addClass("error");
     $(input).parent().removeClass("success");
     $(input).parent().find("small").text(message);
@@ -414,7 +439,7 @@ function submit() {
      
 
     var data = {
-        "title": $("#title").val().replace(/\s/g, ""),
+        "title": $("#title").val(),
         "description": $("#description").val(),
         "fields": selectedColumns.join(),
         "startDate": $("#start_date").val(),

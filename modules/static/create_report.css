@@ -7,6 +7,176 @@ body{
 
 }
 
+.columnDropdownNTime{
+  width: 13%;
+  padding-top: 22px;
+}
+
+.columnDateTime{
+  width: 30%;
+  /* margin-left: 50px; */
+}
+.inputRecipient, .ColumnsWidth{
+  width: 80%;
+}
+
+.RecipientWidth{
+  width: 474px;
+}
+.FrequencyWidth{
+  width: 222px;
+}
+.ScheduleWidth{
+  width: 212px;
+}
+.ActionsWidth{
+  width: 202px;
+}
+.ColumnsWidth{
+  width: 393px;
+}
+.ConditionWidth{
+  width: 162px;
+}
+.ValueWidth{
+  width: 396px;
+}
+.ActionWidth{
+  width: 159px;
+}
+
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+@media screen and (max-width: 1200px) {
+  .RecipientWidth{
+    width: 463px;
+  }
+  .FrequencyWidth{
+    width: 165px;
+  }
+  .ScheduleWidth{
+    width: 162px;
+  }
+  .ActionsWidth{
+    width: 158px;
+  }
+  .ColumnsWidth{
+    width: 314px;
+  }
+  .ConditionWidth{
+    width: 137px;
+  }
+  .ValueWidth{
+    width: 337px;
+  }
+  .ActionWidth{
+    width: 142px;
+  }
+}
+
+@media screen and (max-width: 1000px) {
+  .columnDateTime {
+    width: 100%;
+    padding-top: 55px;
+    text-align: left;
+  }
+  .RecipientWidth{
+    width: 451px;
+  }
+  .FrequencyWidth{
+    width: 163px;
+  }
+  .ScheduleWidth{
+    width: 160px;
+  }
+  .ActionsWidth{
+    width: 156px;
+  }
+  .ColumnsWidth{
+    width: 314px;
+  }
+  .ConditionWidth{
+    width: 137px;
+  }
+  .ValueWidth{
+    width: 337px;
+  }
+  .ActionWidth{
+    width: 142px;
+  }
+}
+
+@media screen and (max-width: 995px) {
+  .RecipientWidth{
+    width: 309px;
+  }
+  .FrequencyWidth{
+    width: 135px;
+  }
+  .ScheduleWidth{
+    width: 129px;
+  }
+  .ActionsWidth{
+    width: 117px;
+  }
+  .ColumnsWidth{
+    width: 259px;
+  }
+  .ConditionWidth{
+    width: 109px;
+  }
+  .ValueWidth{
+    width: 213px;
+  }
+  .ActionWidth{
+    width: 109px;
+  }
+}
+
+
+@media screen and (max-width: 770px) {
+  .RecipientWidth{
+    width: 250px;
+  }
+  .FrequencyWidth{
+    width: 122px;
+  }
+  .ScheduleWidth{
+    width: 115px;
+  }
+  .ActionsWidth{
+    width: 100px;
+  }
+  .ColumnsWidth{
+    width: 241px;
+  }
+  .ConditionWidth{
+    width: 99px;
+  }
+  .ValueWidth{
+    width: 109px;
+  }
+  .ActionWidth{
+    width: 97px;
+  }
+}
+
+.ms-res-ctn{
+  overflow: scroll;
+}
+
+
+
+
+
+
+
+
+
 .blank{
   border: 1px solid #c74c3c;
   box-shadow: 0px 0px 0px 1px #c74c3c;
@@ -163,11 +333,15 @@ th, td {
   width: 150px;
   border: none;
 }
+.AddRemoveButton{
+  width: 100px;
+  border: none;
+}
 
 .AddRemoveButton {
   border-radius: 10px;
   position: absolute;
-  margin-left: 15px;
+  margin-left: 5px;
   background-color: rgb(255, 79, 79);
   padding: 8px;
 }
@@ -217,11 +391,9 @@ th, td {
     padding: 0;
   }
   .AddRemoveButton{
-    margin-top: 10px;
     margin-bottom: 10px;
     display: block;
     flex-wrap: wrap;
-    padding-top: 10px;
     padding-bottom: 10px;
   }
   .table-striped{
@@ -328,7 +500,7 @@ th {
 }
 
 .form-select{
-  width: 250px;
+  width: 235px;
   padding: 8px;
 }
 
@@ -348,6 +520,9 @@ th {
   background-color: rgb(255, 218, 218);
 }
 
+#EmailTable, #FilterTable{
+  overflow-x: auto;
+}
 
 
 /*------------------------ Validation------------------------ */
@@ -361,8 +536,8 @@ th {
   position:relative;
   margin: 5px;
   visibility: hidden;
-margin-top: 10px;
-font-weight: bold;
+  margin-top: 10px;
+  font-weight: bold;
 }
 .form-control{
   margin-bottom:10px;

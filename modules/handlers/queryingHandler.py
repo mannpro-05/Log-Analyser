@@ -26,7 +26,7 @@ def queryCreater(id):
     filters = cursor.fetchall()
     finalFiltersArray = []
 
-    sql = joinHandler.createInnerJoinQuery(records[3].split(','))
+    sql,extraClause = joinHandler.createInnerJoinQuery(records[3].split(','))
     start = time.time()
     for filter in filters:
         l = []
@@ -41,7 +41,7 @@ def queryCreater(id):
                 finalFiltersArray.append('(' + ' OR '.join(temp) + ')')
             else:
                 if filter[1] in magicException:
-                    cursor = conn.execute('SELECT ID FROM %s WHERE %s like ? ESCAPE ?'% (filter[1], filter[1]), (filter[3],'/'))
+                    cursor = conn.execute('SELECT ID FROM %s WHERE %s like ? ESCAPE ?'% (filter[1], filter[1]), ('%'+filter[3]+'%','/'))
                     value = cursor.fetchall()
                     if value != []:
                         if len(value) > 1000:
@@ -69,16 +69,23 @@ def queryCreater(id):
                     for i in filter[3].split(','):
                         temp.append('(F.' + filter[1] + ' ' + filter[2] + ' ' + i + ')')
                     finalFiltersArray.append('(' + ' OR '.join(temp) + ')')
-    print(finalFiltersArray)
-    if len(finalFiltersArray)>1:
-        finalFiltersArray = ' AND '.join(finalFiltersArray)
-        sql += " WHERE " + finalFiltersArray
-    elif len(finalFiltersArray) == 0:
-        sql = sql
+    if "DATE_TIME" not in records[3].split(','):
+        if len(finalFiltersArray)>1:
+            finalFiltersArray = ' AND '.join(finalFiltersArray)
+            sql += " WHERE " + finalFiltersArray + extraClause
+        elif len(finalFiltersArray) == 0:
+            sql = sql + extraClause
+        else:
+            sql += " WHERE " + finalFiltersArray[0] + extraClause
     else:
-        sql += " WHERE " + finalFiltersArray[0]
+        if len(finalFiltersArray)>1:
+            finalFiltersArray = ' AND '.join(finalFiltersArray)
+            sql += " WHERE " + finalFiltersArray + extraClause
+        elif len(finalFiltersArray) == 0:
+            sql = sql + extraClause
+        else:
+            sql += " WHERE " + finalFiltersArray[0] + extraClause
     end = time.time()
-    print(sql)
     print('Time to create the sql query:',end-start)
     start = time.time()
     cursor = conn.execute(sql)

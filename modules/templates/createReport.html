@@ -5,9 +5,11 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.js"
+        integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
     <title>Document</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
@@ -61,18 +63,26 @@
                 Remove
             </button>
         </div>
-        <div>
-            <label for="start-date">Start Date</label>
-            <input type="date" id="start_date" name="start-date">
-            <label for="start-time">Start Time</label>
-            <input type="time" id="start_time" name="start-time">
-            <label for="end_date">End Date</label>
-            <input type="date" id="end_date" name="end-date">
-            <label for="end_time">End Time</label>
-            <input type="time" id="end_time" name="end-time">
-
-
-        </div>
+        <div class="columnDropdownNTime">
+                    <button id="columnButton" type="button" class="AddRemoveButton">
+                        Remove
+                    </button>
+                </div>
+                <div class="columnDateTime">
+                    <div>
+                        <label for="start-date">Start Date</label>
+                        <input type="date" id="start_date" name="start-date">
+                        <br>
+                        <b><small class="ErrorContainer">Error Message</small></b>
+                    </div>
+                    <br>
+                    <div>
+                        <label for="end_date">End Date</label>
+                        <input type="date" id="end_date" name="end-date">
+                        <br>
+                        <b><small class="ErrorContainer">Error Message</small></b>
+                    </div>
+                </div>
         <br>
 
         <div style="overflow-x:auto;">
@@ -120,19 +130,21 @@
                 </thead>
                 <tbody>
 
-                </tbody>
-            </table>
-        <div>
+                    </tbody>
+                </table>
+                <div>
                     <b><small class="ErrorContainer">Error Message</small></b>
                 </div>
-            <button id="AddFilterRow" name="AddRow" type="button">Add</button>
-        </div>
-        </main>
-        <div class="submitButton">
-            <button id="submit" name="submit" type="submit">Submit</button>
-        </div>
-    </form>
-        <p id="result">
+                <button id="AddFilterRow" name="AddRow" type="button">Add</button>
+            </div>
+            <div class="submitButton">
+                <button id="submit" name="submit" type="submit">Submit</button>
+            </div>
+        </form>
+    </main>
+
+
+    </p>
 </body>
 
 </html>
