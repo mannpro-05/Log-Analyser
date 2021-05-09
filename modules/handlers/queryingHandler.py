@@ -33,7 +33,7 @@ def queryCreater(id):
         if filter[2] == 'between':
             values = filter[3].split(',')
             finalFiltersArray.append('(F.'+filter[1]+' '+filter[2]+' '+ values[0] +' AND '+   values[1] +')')
-        elif filter[2] == '!=':
+        elif filter[2] == '!=' and filter[1] in magicException:
             cursor = conn.execute('SELECT ID FROM %s WHERE %s like ? ESCAPE ?' % (filter[1], filter[1]),
                                   ('%' + filter[3] + '%', '/'))
             value = cursor.fetchall()
@@ -44,6 +44,12 @@ def queryCreater(id):
                     l.append('(F.' + filter[1] + ' ' + filter[2] + ' ' + str(i[0]) + ')')
                 l = ' AND '.join(l)
                 l = '(' + l + ')'
+            finalFiltersArray.append(l)
+        elif filter[2] == '!=' and filter[1] not in magicException:
+            for i in filter[3].split(','):
+                l.append('(F.' + filter[1] + ' ' + filter[2] + ' ' + str(i[0]) + ')')
+            l = ' AND '.join(l)
+            l = '(' + l + ')'
             finalFiltersArray.append(l)
         else:
             if filter[1] in exception:
