@@ -1,13 +1,8 @@
 import sqlite3 as sl
-import inspect
-from modules import app
-from datetime import datetime
+
 
 
 def deleteReport(title, userid):
-    now = datetime.now()
-    app.logger.info(
-        str(now.strftime("%H:%M %Y-%m-%d")) + ' ' + __file__ + ' ' + inspect.stack()[0][3], ' Title: '+title)
     conn = sl.connect('logs.db')
     cursor = conn.execute("SELECT ID FROM RECORDS_LIST WHERE TITLE = ? AND USERID = ?", (title, userid))
     id = cursor.fetchone()
