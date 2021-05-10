@@ -9,11 +9,13 @@ Output:	None.
 def mailConfig(data):
     with open('modules/config.json') as configFile:
         config_data = json.load(configFile)
+    backup_config_data = config_data
     for key, value in data.items():
         if value != "":
             config_data[key] = value
         configFile.close()
     try:
+        app.config.update(config_data)
         mail = Mail(app)
         msg = Message(subject="Mail server testing email",
                       sender=config_data['MAIL_USERNAME'], recipients=[config_data['MAIL_USERNAME']])
@@ -24,8 +26,9 @@ def mailConfig(data):
             json.dump(config_data, configFile)
             configFile.close()
         configFile.close()
-        app.config.update(config_data)
+
         return {"message":"Mail settings were updated successfully!"}
     except Exception as e:
         print(e)
+        app.config.update(backup_config_data)
         return {"message":"The mail server settings were not updated. Please check the all the mail server details again."}
