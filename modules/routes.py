@@ -322,7 +322,7 @@ def reset_request():
                      (now.strftime("%H:%M %Y-%m-%d"), form.email.data,
                       "Requested for reset password","Reset Password Page"))
         conn.commit()
-        flash('An email has been send with instructions to reset your password!','success')
+        flash('An email has been send to the administrator with instructions to reset your password!','success')
         return redirect(url_for('login'))
     return render_template(r'reset_request.html', title='Reset password', form=form, legend='Reset Password')
 
