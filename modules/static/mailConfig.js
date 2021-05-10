@@ -28,6 +28,7 @@ function mailConfig(){
 
     }).done(function (data) {
         alert(data.message);
+        location.reload();
     })
 }
 
