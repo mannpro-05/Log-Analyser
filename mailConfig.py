@@ -9,7 +9,7 @@ while True:
     ssl_value = ["True", "False"]
     use_ssl = int(input("Does your mail server use SSL:\n1.Yes\n2.No\n:"))
     password = input('Password: ')
-    cpassword = input('Confirm Password: ')
+    cpassword = input('Confirm Password: ')d
 
     if password == cpassword and (len(password)!=0) and (use_ssl in numbers):
         with open('modules/config.json') as file:
