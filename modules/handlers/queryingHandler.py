@@ -44,19 +44,19 @@ def queryCreater(id):
                     return []
                 else:
                     if len(value) > 1000:
-                        temp = []
+                        multipleUrlList = []
                         counter = 1
                         for j in value:
                             multipleUrl.append('(F.' + filter[1] + ' ' + filter[2] + ' ' + str(j[0]) + ')')
                             counter += 1
                             if counter > 500:
-                                multipleUrl = ' AND '.join(l)
+                                multipleUrl = ' AND '.join(multipleUrl)
                                 multipleUrl = '(' + multipleUrl + ')'
-                                temp.append(multipleUrl)
+                                multipleUrlList.append(multipleUrl)
                                 multipleUrl = []
-                        temp = ' AND '.join(temp)
-                        temp = '(' + temp + ')'
-                        finalFiltersArray.append(temp)
+                        multipleUrlList = ' AND '.join(multipleUrlList)
+                        multipleUrlList = '(' + multipleUrlList + ')'
+                        finalFiltersArray.append(multipleUrlList)
                     else:
                         for i in value:
                             multipleUrl.append('(F.' + filter[1] + ' ' + filter[2] + ' ' + str(i[0]) + ')')
@@ -64,24 +64,23 @@ def queryCreater(id):
                         multipleUrl = '(' + multipleUrl + ')'
                         finalFiltersArray.append(multipleUrl)
         elif filter[2] == '!=' and filter[1] not in magicException:
-            l = []
+            targetColumnId = []
             for i in filter[3].split(','):
-                l.append('(F.' + filter[1] + ' ' + filter[2] + ' ' + str(i[0]) + ')')
-            l = ' AND '.join(l)
-            l = '(' + l + ')'
-            finalFiltersArray.append(l)
+                targetColumnId.append('(F.' + filter[1] + ' ' + filter[2] + ' ' + str(i[0]) + ')')
+            targetColumnId = ' AND '.join(targetColumnId)
+            targetColumnId = '(' + targetColumnId + ')'
+            finalFiltersArray.append(targetColumnId)
         else:
-
             if filter[1] in exception:
-                temp = []
+                exceptionTargetColumn = []
                 for i in filter[3].split(','):
-                    temp.append('(F.' + filter[1] + ' ' + filter[2] + ' ' + i + ')')
-                finalFiltersArray.append('(' + ' OR '.join(temp) + ')')
+                    exceptionTargetColumn.append('(F.' + filter[1] + ' ' + filter[2] + ' ' + i + ')')
+                finalFiltersArray.append('(' + ' OR '.join(exceptionTargetColumn) + ')')
             else:
                 if filter[1] in magicException:
                     multipleUrl = []
                     for j in filter[3].split(','):
-                        l = []
+                        multipleUrlList = []
                         cursor = conn.execute('SELECT ID FROM %s WHERE %s like ? ESCAPE ?' % (filter[1], filter[1]),
                                               ('%' + j + '%', '/'))
                         value = cursor.fetchall()
@@ -89,18 +88,18 @@ def queryCreater(id):
                             if len(value) > 1000:
                                 counter = 1
                                 for i in value:
-                                    l.append('(F.' + filter[1] + ' ' + filter[2] + ' ' + str(i[0]) + ')')
+                                    multipleUrlList.append('(F.' + filter[1] + ' ' + filter[2] + ' ' + str(i[0]) + ')')
                                     counter += 1
                                     if counter > 500:
-                                        multipleUrl.append('(' + ' OR '.join(l) + ')')
-                                        l = []
+                                        multipleUrl.append('(' + ' OR '.join(multipleUrlList) + ')')
+                                        multipleUrlList = []
                                         counter = 1
                             else:
                                 for i in value:
-                                    l.append('(F.' + filter[1] + ' ' + filter[2] + ' ' + str(i[0]) + ')')
-                                l = ' OR '.join(l)
-                                l = '(' + l + ')'
-                                multipleUrl.append(l)
+                                    multipleUrlList.append('(F.' + filter[1] + ' ' + filter[2] + ' ' + str(i[0]) + ')')
+                                multipleUrlList = ' OR '.join(multipleUrlList)
+                                multipleUrlList = '(' + multipleUrlList + ')'
+                                multipleUrl.append(multipleUrlList)
                         else:
                             return []
                     finalFiltersArray.append('(' + ' OR '.join(multipleUrl) + ')')
@@ -118,6 +117,7 @@ def queryCreater(id):
             sql += " WHERE " + finalFiltersArray + extraClause
         elif len(finalFiltersArray) == 0:
             sql = sql + extraClause
+        # this else will be executed if the length of the finalFiltersArray is exactly one
         else:
             sql += " WHERE " + finalFiltersArray[0] + extraClause
     else:
@@ -141,6 +141,5 @@ def queryCreater(id):
         print("Empty!!", value)
         return []
     else:
-        print(fields)
         finalData, columns = getFinalData.getAllData(value, fields)
         return finalData
