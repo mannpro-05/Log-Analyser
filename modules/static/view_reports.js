@@ -75,8 +75,14 @@ function deleteReport(deleteButton){
         dataType: 'json',
         url: '/deleteReport',
     }).done(function (data) {
-        $(deleteButton).parents("tr").remove();
-        alert(data.message);
+        if (data.delete === "yes"){
+            $(deleteButton).parents("tr").remove();
+            alert(data.message);
+        }
+        else {
+            alert(data.message);
+        }
+
     });
 
 }
