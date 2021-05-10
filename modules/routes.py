@@ -162,15 +162,13 @@ def mailConfig():
         str(now.strftime("%H:%M %Y-%m-%d")) + ' ' + __file__ + ' ' + inspect.stack()[0][3])
     if request.method == 'POST':
         data = request.get_json()
-        mailUpdate.mailConfig(data)
+        message = mailUpdate.mailConfig(data)
         conn = sl.connect('logs.db')
         conn.execute("INSERT INTO ACTIVITY VALUES (?,?,?,?)",
                      (now.strftime("%H:%M %Y-%m-%d"), current_user.username + " ("+current_user.email+")"\
                           , "Made Changes in the database!", "Mail Config Page."))
         conn.commit()
-        return {"message":"The mail server has been updated!"}
-
-
+        return message
 
 
 

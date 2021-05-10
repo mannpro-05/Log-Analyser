@@ -1,5 +1,6 @@
 from modules import app
 import json
+from flask_mail import Mail, Message
 '''
 input: Updated information of mail server in json format.
 processing: Updates the mail server configuration according to the input.
@@ -12,9 +13,19 @@ def mailConfig(data):
         if value != "":
             config_data[key] = value
         configFile.close()
-
-    with open('modules/config.json','w') as configFile:
-        json.dump(config_data, configFile)
-
-    app.config.update(config_data)
-    print(app.config)
+    try:
+        mail = Mail(app)
+        msg = Message(subject="Mail server testing email",
+                      sender=config_data['MAIL_USERNAME'], recipients=[config_data['MAIL_USERNAME']])
+        msg.body = 'This is an testing email to check whether the details for the mail server that you entered' \
+                   'were correct or not.'
+        mail.send(msg)
+        with open('modules/config.json', 'w') as configFile:
+            json.dump(config_data, configFile)
+            configFile.close()
+        configFile.close()
+        app.config.update(config_data)
+        return {"message":"Mail settings were updated successfully!"}
+    except Exception as e:
+        print(e)
+        return {"message":"The mail server settings were not updated. Please check the all the mail server details again."}
