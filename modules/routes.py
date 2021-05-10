@@ -57,6 +57,7 @@ def config():
     app.logger.info(str(now.strftime("%H:%M %Y-%m-%d")) + ' ' + __file__ + ' ' + inspect.stack()[0][3])
     with open('modules/config.json') as configFile:
         config_data = json.load(configFile)
+        print(config_data)
         return render_template('mailConfig.html', smtp=config_data["MAIL_SERVER"], port=config_data["MAIL_PORT"], \
                                email=config_data["MAIL_USERNAME"], password=config_data["MAIL_PASSWORD"])
 
@@ -169,7 +170,6 @@ def mailConfig():
                           , "Made Changes in the database!", "Mail Config Page."))
         conn.commit()
         return message
-
 
 
 @app.route('/sendQuery', methods=["GET","POST"])
@@ -343,8 +343,8 @@ def reset_token(token):
         user.password = hashed_password
         db.session.commit()
         conn = sl.connect('logs.db')
-        conn.execute("INSERT INTO ACTIVITY VALUES (?,?,?)",
-                     (now.strftime("%H:%M %Y-%m-%d"), user.username + " ("+current_user.email+")" ,
+        conn.execute("INSERT INTO ACTIVITY VALUES (?,?,?,?)",
+                     (now.strftime("%H:%M %Y-%m-%d"), user.username + " ("+user.email+")" ,
                       "Admin Re-set the password password","Update Password Page"))
         conn.commit()
         flash('Your password has been Updated!', 'success')
@@ -371,9 +371,9 @@ def delete_account():
     user=User.query.filter_by(email=current_user.email).first()
     now = datetime.now()
     conn = sl.connect('logs.db')
-    conn.execute("INSERT INTO ACTIVITY VALUES (?,?,?)",
+    conn.execute("INSERT INTO ACTIVITY VALUES (?,?,?,?)",
                  (now.strftime("%H:%M %Y-%m-%d"), current_user.username,
-                  "Deleted their account"))
+                  "Deleted their account","Account's Page"))
     conn.commit()
     User.query.filter_by(email=user.email).delete()
     flash('Your password has been Updated!', 'success')
