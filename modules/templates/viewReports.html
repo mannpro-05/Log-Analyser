@@ -90,8 +90,6 @@
                                     <button name="DownloadXLS" class="Excelbutton">Excel</button></a>
                                 <a href="{{ url_for('download', title = row["title"], fileType = 'csv' ) }}">
                                     <button name="DownloadCSV" class="CSVbutton" >CSV</button></a>
-                                <a href="{{ url_for('download', title = row["title"], fileType = 'pdf' ) }}">
-                                    <button name="DownloadPDF" class="PDFbutton" >PDF</button></a>
                                 </div>
                                 <button onclick="deleteReport(this)" name="Delete" class="DeleteAction"><i class="fa fa-trash"></i></button>
                         </div>
