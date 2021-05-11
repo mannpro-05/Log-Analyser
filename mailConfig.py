@@ -1,6 +1,7 @@
 import json
 from modules import app
 from flask_mail import Mail, Message
+print("------------------Mail Configuration------------------------------------------------")
 while True:
     mail_server = input("Enter your SMTP outgoing mail server: ")
     portNumber = input("Enter your outgoing port number: ")

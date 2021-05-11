@@ -1,6 +1,6 @@
 from modules.models import User
 from modules import bcrypt,db
-
+print("-------------------Admin Account Creation---------------------------------------------------------------")
 username = input('Enter username: ')
 email = input('Enter email ID: ')
 while True:
