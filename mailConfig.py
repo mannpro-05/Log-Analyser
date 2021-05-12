@@ -8,7 +8,10 @@ while True:
     username = input("Enter your outgoing username: ")
     numbers = [1,2]
     ssl_value = ["True", "False"]
-    use_ssl = int(input("Does your mail server use SSL:\n1.Yes\n2.No\n:"))
+    try:
+        use_ssl = int(input("Does your mail server use SSL\nChoose 1 For Yes and 2 For No:\n1.Yes\n2.No\n:"))
+    except:
+        print('Please enter either 1 for YES or 2 for NO in the input when asked to enter the SSL Details.')
     password = input('Password: ')
     cpassword = input('Confirm Password: ')
 
