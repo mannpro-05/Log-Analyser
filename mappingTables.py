@@ -173,6 +173,12 @@ def createTable():
         PAGENAME TEXT
     );
     ''')
+    conn.execute('''
+        CREATE TABLE FILEUPDATIONINFO (
+            FILENAME TEXT,
+            LINENUMBER INT
+        );
+        ''')
 
 
 try:

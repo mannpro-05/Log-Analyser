@@ -44,19 +44,25 @@ months = {
 
 
 exception = ['STATUS', 'UPLOAD', 'DOWNLOAD']
-counter = 0
+max = int(os.listdir()[0].split('-')[0])
 for log in os.listdir():
+    counter = 0
+    if log == 'extended.log':
+        continue
     with open(log,'r') as logs:
         for i in logs:
+            counter+=1
             lst = i.split('\t')
             finalData = []
-            counter += 1
+
             if len(lst) == 1 or 'date_time' in lst[3].strip('"'):
+
                 continue
             try:
                 for key, val in mapper.items():
                     if key in exception:
                         finalData.append(lst[val].strip('"'))
+
                         continue
                     elif key == 'DATE_TIME':
                         date = lst[val].strip('"').split(':')
@@ -65,6 +71,7 @@ for log in os.listdir():
                         finalData.append(
                             datetime.datetime(int(day[2]), int(day[1]), int(day[0]), int(date[1]), int(date[2]),
                                               int(date[3])).timestamp())
+
                         continue
                     elif key == 'URL':
                         if lst[val].strip('"') != '-':
@@ -100,10 +107,16 @@ for log in os.listdir():
                     conn.commit()
             except Exception as e:
                 print(e)
+    if int(log.split('-')[0]) >= max:
+        maxCounter = counter
+        max = int(log.split('-')[0])
 
-        conn.commit()
 
+conn.commit()
 
+conn.execute("INSERT INTO FILEUPDATIONINFO VALUES (?,?)",(max, maxCounter))
+
+conn.commit()
 
 end = time.time()
 print(end - start)
