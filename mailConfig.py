@@ -1,7 +1,8 @@
 import json
 from modules import app
 from flask_mail import Mail, Message
-print("------------------Mail Configuration------------------------------------------------")
+print("------------------------------------Mail Configuration------------------------------------------------")
+print("------------------------------------Now you will be configuring the Mail server. So enter your mail server details-----------------------------------")
 while True:
     mail_server = input("Enter your SMTP outgoing mail server: ")
     portNumber = input("Enter your outgoing port number: ")
@@ -29,7 +30,7 @@ while True:
                 msg = Message(subject="Mail server testing email",
                               sender=config_data['MAIL_USERNAME'], recipients=[config_data['MAIL_USERNAME']])
                 msg.body = 'This is an testing email to check whether the details for the mail server that you entered' \
-                           'were correct or not.'
+                           ' were correct or not.\nSo just ignore the email.'
                 with app.app_context():
                     mail.send(msg)
                 with open('modules/config.json', 'w') as configFile:
