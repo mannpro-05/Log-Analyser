@@ -1,4 +1,3 @@
-import sqlite3 as sl
 from modules import epochTImeConversions
 from datetime import datetime
 import inspect
