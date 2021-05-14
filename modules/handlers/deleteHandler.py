@@ -1,7 +1,5 @@
 import sqlite3 as sl
 
-
-
 def deleteReport(title, userid):
     conn = sl.connect('logs.db')
     cursor = conn.execute("SELECT ID FROM RECORDS_LIST WHERE TITLE = ? AND USERID = ?", (title, userid))
