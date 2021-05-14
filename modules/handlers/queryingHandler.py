@@ -66,7 +66,7 @@ def queryCreater(id):
         elif filter[2] == '!=' and filter[1] not in magicException:
             targetColumnId = []
             for i in filter[3].split(','):
-                targetColumnId.append('(F.' + filter[1] + ' ' + filter[2] + ' ' + str(i[0]) + ')')
+                targetColumnId.append('(F.' + filter[1] + ' ' + filter[2] + ' ' + str(i) + ')')
             targetColumnId = ' AND '.join(targetColumnId)
             targetColumnId = '(' + targetColumnId + ')'
             finalFiltersArray.append(targetColumnId)
