@@ -76,8 +76,9 @@ function deleteReport(deleteButton){
         url: '/deleteReport',
     }).done(function (data) {
         if (data.delete === "yes"){
-            $(deleteButton).parents("tr").remove();
             alert(data.message);
+            $(deleteButton).parents("tr").remove();
+            console.log('deleted')
         }
         else {
             alert(data.message);
