@@ -47,7 +47,6 @@ exception = ['STATUS', 'UPLOAD', 'DOWNLOAD']
 max = int(os.listdir()[0].split('-')[0])
 for log in os.listdir():
     counter = 0
-    print(log.split('.')[-1])
     if log == 'extended.log' or log.split('.')[-1] != 'log':
         continue
     with open(log,'r') as logs:
