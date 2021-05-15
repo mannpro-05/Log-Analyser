@@ -24,9 +24,11 @@ for i in os.listdir():
     if i == 'extended.log' or i.split('.')[-1] != 'log':
         continue
     elif int(i.split('-')[0]) > currentFileName:
+        print(i)
         newFileName = int(i.split('-')[0])
         newFileLine = insertRecords.insertNewRecords(i)
     elif int(i.split('-')[0]) == currentFileName:
+        print(i)
         currentFileLine = insertRecords.insertModifiedRecordsRecords(i, currentFileLine)
 
 conn.execute("DELETE FROM FILEUPDATIONINFO")
