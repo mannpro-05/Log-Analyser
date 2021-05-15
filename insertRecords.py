@@ -121,7 +121,7 @@ def insertModifiedRecordsRecords(fileName, oldCounter):
             finalData = []
             if len(lst) == 1 or 'date_time' in lst[3].strip('"'):
                 continue
-            elif counter < oldCounter:
+            elif counter <= oldCounter:
                 continue
             else:
                 try:

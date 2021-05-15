@@ -21,7 +21,7 @@ newFileLine = 0
 max = int(os.listdir()[0].split('-')[0])
 
 for i in os.listdir():
-    if i == 'extended.log':
+    if i == 'extended.log' or i.split('.')[-1] != 'log':
         continue
     elif int(i.split('-')[0]) > currentFileName:
         newFileName = int(i.split('-')[0])
