@@ -110,6 +110,7 @@ def insertNewRecords(fileName):
                     conn.commit()
             except Exception as e:
                 print(e)
+    conn.commit()
     return counter
 
 def insertModifiedRecordsRecords(fileName, oldCounter):

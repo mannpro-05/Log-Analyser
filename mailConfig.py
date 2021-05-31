@@ -30,7 +30,7 @@ while True:
                 msg = Message(subject="Mail server testing email",
                               sender=config_data['MAIL_USERNAME'], recipients=[config_data['MAIL_USERNAME']])
                 msg.body = 'This is an testing email to check whether the details for the mail server that you entered' \
-                           ' were correct or not.\nSo just ignore the email.'
+                           ' were correct or not.\n So just ignore the email.'
                 with app.app_context():
                     mail.send(msg)
                 with open('modules/config.json', 'w') as configFile:
